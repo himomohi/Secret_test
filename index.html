@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vampire Survivors Clone - Pixel Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #gameContainer {
+            position: relative;
+            background: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+
+        #gameCanvas {
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .ui-overlay > * {
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="1280" height="720"></canvas>
+        <div id="uiOverlay" class="ui-overlay"></div>
+    </div>
+
+    <!-- Core Engine -->
+    <script src="src/engine/GameEngine.js"></script>
+    <script src="src/engine/Renderer.js"></script>
+    <script src="src/engine/InputManager.js"></script>
+    <script src="src/engine/Camera.js"></script>
+
+    <!-- Data -->
+    <script src="src/data/characters.js"></script>
+    <script src="src/data/skills.js"></script>
+    <script src="src/data/items.js"></script>
+    <script src="src/data/enemies.js"></script>
+
+    <!-- Systems -->
+    <script src="src/systems/MapGenerator.js"></script>
+    <script src="src/systems/SkillSystem.js"></script>
+    <script src="src/systems/ItemSystem.js"></script>
+    <script src="src/systems/SpawnSystem.js"></script>
+    <script src="src/systems/SaveSystem.js"></script>
+    <script src="src/systems/CollisionSystem.js"></script>
+
+    <!-- Entities -->
+    <script src="src/entities/Entity.js"></script>
+    <script src="src/entities/Player.js"></script>
+    <script src="src/entities/Enemy.js"></script>
+    <script src="src/entities/Projectile.js"></script>
+    <script src="src/entities/Item.js"></script>
+
+    <!-- UI -->
+    <script src="src/ui/UIManager.js"></script>
+    <script src="src/ui/MainMenu.js"></script>
+    <script src="src/ui/CharacterSelect.js"></script>
+    <script src="src/ui/GameHUD.js"></script>
+    <script src="src/ui/LevelUpMenu.js"></script>
+
+    <!-- Main -->
+    <script src="src/main.js"></script>
+</body>
+</html>
