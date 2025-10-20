@@ -167,13 +167,15 @@ class GameEngine {
         // Start game loop if not running
         if (!this.running) {
             this.running = true;
-            this.gameLoop(0);
+            this.lastTime = performance.now();
+            this.gameLoop();
         }
     }
 
     gameLoop(currentTime) {
         if (!this.running) return;
 
+        currentTime = currentTime || performance.now();
         this.deltaTime = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
 
