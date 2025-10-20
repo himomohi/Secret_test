@@ -5,11 +5,21 @@ class SpawnSystem {
         this.spawnInterval = 2.0; // 2초마다 스폰
         this.spawnCount = 5; // 한 번에 5마리
         this.difficultyMultiplier = 1.0;
+        this.maxEnemies = 100; // 최대 적 수
     }
 
     init() {
         this.spawnTimer = 0;
         this.difficultyMultiplier = 1.0;
+
+        // 모바일 성능 최적화
+        if (this.game.isMobile) {
+            this.spawnCount = 3; // 모바일에서는 적게 스폰
+            this.maxEnemies = 50; // 최대 적 수 제한
+        } else {
+            this.spawnCount = 5;
+            this.maxEnemies = 100;
+        }
     }
 
     update(dt) {
@@ -31,9 +41,19 @@ class SpawnSystem {
         const player = this.game.player;
         if (!player) return;
 
+        // 적 수 제한 체크
+        if (this.game.enemies.length >= this.maxEnemies) {
+            return;
+        }
+
         const spawnCount = Math.floor(this.spawnCount * this.difficultyMultiplier);
 
         for (let i = 0; i < spawnCount; i++) {
+            // 최대 적 수 체크
+            if (this.game.enemies.length >= this.maxEnemies) {
+                break;
+            }
+
             const enemyData = this.selectEnemyType();
             const pos = this.getSpawnPosition();
 

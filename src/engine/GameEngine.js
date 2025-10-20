@@ -2,13 +2,19 @@ class GameEngine {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
+
+        // 반응형 캔버스 크기 설정
+        this.baseWidth = 1280;
+        this.baseHeight = 720;
+        this.updateCanvasSize();
 
         this.state = 'MAIN_MENU'; // MAIN_MENU, CHARACTER_SELECT, PLAYING, PAUSED, GAME_OVER
         this.lastTime = 0;
         this.deltaTime = 0;
         this.running = false;
+
+        // 모바일 감지
+        this.isMobile = this.detectMobile();
 
         // Game objects
         this.player = null;
@@ -39,12 +45,84 @@ class GameEngine {
         // Map
         this.map = null;
         this.tileSize = 32;
+
+        // 리사이즈 이벤트 리스너
+        window.addEventListener('resize', () => this.onResize());
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => this.onResize(), 100);
+        });
+    }
+
+    detectMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+               (window.innerWidth <= 768) ||
+               ('ontouchstart' in window);
+    }
+
+    updateCanvasSize() {
+        const container = document.getElementById('gameContainer');
+        const dpr = window.devicePixelRatio || 1;
+
+        // 컨테이너 크기 가져오기
+        const rect = container.getBoundingClientRect();
+        let width = rect.width;
+        let height = rect.height;
+
+        // 모바일에서는 화면 크기에 맞춤
+        if (this.isMobile || window.innerWidth <= 768) {
+            width = window.innerWidth;
+            height = window.innerHeight;
+        }
+
+        // 16:9 비율 유지
+        const targetRatio = 16 / 9;
+        const currentRatio = width / height;
+
+        if (currentRatio > targetRatio) {
+            width = height * targetRatio;
+        } else {
+            height = width / targetRatio;
+        }
+
+        // 캔버스 내부 해상도 설정 (픽셀 퍼펙트를 위해)
+        this.canvas.width = Math.floor(width / 2); // 모바일 성능 최적화
+        this.canvas.height = Math.floor(height / 2);
+
+        // 캔버스 표시 크기
+        this.canvas.style.width = width + 'px';
+        this.canvas.style.height = height + 'px';
+
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
+
+        // 스케일 팩터 저장
+        this.scale = this.width / this.baseWidth;
+    }
+
+    onResize() {
+        this.updateCanvasSize();
+
+        // 렌더러 재초기화
+        if (this.renderer) {
+            this.renderer.init();
+        }
+
+        // UI 재조정
+        if (this.uiManager && this.state === 'PLAYING') {
+            this.uiManager.onResize();
+        }
     }
 
     init() {
         this.renderer.init();
         this.inputManager.init();
         this.uiManager.init();
+
+        // 모바일 컨트롤 표시
+        if (this.isMobile) {
+            this.inputManager.showMobileControls();
+        }
+
         this.showMainMenu();
     }
 
