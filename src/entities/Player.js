@@ -66,35 +66,47 @@ class Player extends Entity {
     }
 
     render(ctx) {
-        // 플레이어 몸체 (픽셀 아트 스타일)
         const x = Math.floor(this.x - this.size / 2);
         const y = Math.floor(this.y - this.size / 2);
 
-        // 외곽선
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(x - 1, y - 1, this.size + 2, this.size + 2);
+        // 픽셀 아트 렌더러 사용
+        if (window.pixelArtRenderer && CHARACTER_SPRITES[this.characterData.id]) {
+            // 그림자
+            window.pixelArtRenderer.drawShadow(x, y, this.size, this.size);
 
-        // 몸체
-        ctx.fillStyle = this.color;
-        ctx.fillRect(x, y, this.size, this.size);
+            // 스프라이트 그리기
+            const sprite = CHARACTER_SPRITES[this.characterData.id];
+            window.pixelArtRenderer.drawSprite(x, y, sprite, 1.3);
 
-        // 눈
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(x + 6, y + 8, 4, 4);
-        ctx.fillRect(x + 14, y + 8, 4, 4);
+            // 체력바
+            if (this.health < this.maxHealth) {
+                window.pixelArtRenderer.drawHealthBar(
+                    x - 2,
+                    y - 4,
+                    this.size + 4,
+                    this.health,
+                    this.maxHealth
+                );
+            }
 
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(x + 8, y + 9, 2, 2);
-        ctx.fillRect(x + 16, y + 9, 2, 2);
-
-        // 체력바
-        this.renderHealthBar(ctx);
-
-        // 레벨 표시
-        ctx.fillStyle = '#ffff00';
-        ctx.font = '10px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(`Lv.${this.level}`, this.x, this.y - this.size / 2 - 16);
+            // 레벨 표시
+            ctx.save();
+            ctx.fillStyle = '#ffff00';
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.font = 'bold 10px monospace';
+            ctx.textAlign = 'center';
+            ctx.strokeText(`Lv.${this.level}`, this.x, this.y - this.size / 2 - 20);
+            ctx.fillText(`Lv.${this.level}`, this.x, this.y - this.size / 2 - 20);
+            ctx.restore();
+        } else {
+            // 폴백: 기본 렌더링
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x - 1, y - 1, this.size + 2, this.size + 2);
+            ctx.fillStyle = this.color;
+            ctx.fillRect(x, y, this.size, this.size);
+            this.renderHealthBar(ctx);
+        }
     }
 
     addExp(amount) {

@@ -47,26 +47,43 @@ class Enemy extends Entity {
         const x = Math.floor(this.x - this.size / 2);
         const y = Math.floor(this.y - this.size / 2);
 
-        // 외곽선
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(x - 1, y - 1, this.size + 2, this.size + 2);
+        // 픽셀 아트 렌더러 사용
+        if (window.pixelArtRenderer && ENEMY_SPRITES[this.enemyData.id]) {
+            // 그림자
+            window.pixelArtRenderer.drawShadow(x, y, this.size, this.size);
 
-        // 몸체
-        ctx.fillStyle = this.color;
-        ctx.fillRect(x, y, this.size, this.size);
+            // 스프라이트 그리기
+            const sprite = ENEMY_SPRITES[this.enemyData.id];
+            const scale = this.enemyData.boss ? 2.0 : 1.2;
+            window.pixelArtRenderer.drawSprite(x, y, sprite, scale);
 
-        // 간단한 얼굴 (적대적)
-        ctx.fillStyle = '#ff0000';
-        ctx.fillRect(x + this.size * 0.25, y + this.size * 0.3, 3, 3);
-        ctx.fillRect(x + this.size * 0.65, y + this.size * 0.3, 3, 3);
+            // 보스 크라운
+            if (this.enemyData.boss) {
+                ctx.fillStyle = '#ffd700';
+                ctx.fillRect(x + this.size / 2 - 8, y - 12, 4, 4);
+                ctx.fillRect(x + this.size / 2 - 4, y - 14, 4, 4);
+                ctx.fillRect(x + this.size / 2, y - 12, 4, 4);
+                ctx.fillRect(x + this.size / 2 + 4, y - 12, 4, 4);
+            }
 
-        // 보스는 크라운 표시
-        if (this.enemyData.boss) {
-            ctx.fillStyle = '#ffaa00';
-            ctx.fillRect(x + this.size / 2 - 6, y - 8, 12, 6);
+            // 체력바
+            if (this.health < this.maxHealth || this.enemyData.boss) {
+                window.pixelArtRenderer.drawHealthBar(
+                    x - 2,
+                    y - 4,
+                    this.size + 4,
+                    this.health,
+                    this.maxHealth
+                );
+            }
+        } else {
+            // 폴백: 기본 렌더링
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x - 1, y - 1, this.size + 2, this.size + 2);
+            ctx.fillStyle = this.color;
+            ctx.fillRect(x, y, this.size, this.size);
+            this.renderHealthBar(ctx);
         }
-
-        this.renderHealthBar(ctx);
     }
 
     applySlowDebuff(slowAmount, duration) {

@@ -40,19 +40,49 @@ class Projectile extends Entity {
     }
 
     render(ctx) {
+        const x = Math.floor(this.x);
+        const y = Math.floor(this.y);
+        const halfSize = Math.floor(this.size / 2);
+
+        // 픽셀 아트 스타일 투사체
+        // 트레일 효과
+        ctx.globalAlpha = 0.3;
         ctx.fillStyle = this.color;
-
-        // 원형 투사체
-        ctx.beginPath();
-        ctx.arc(Math.floor(this.x), Math.floor(this.y), this.size / 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 외곽 글로우 효과
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = 2;
-        ctx.globalAlpha = 0.5;
-        ctx.stroke();
+        ctx.fillRect(x - halfSize - 4, y - halfSize / 2, 4, halfSize);
         ctx.globalAlpha = 1.0;
+
+        // 외곽선
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(x - halfSize - 1, y - halfSize - 1, this.size + 2, this.size + 2);
+
+        // 본체
+        ctx.fillStyle = this.color;
+        ctx.fillRect(x - halfSize, y - halfSize, this.size, this.size);
+
+        // 하이라이트
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.fillRect(x - halfSize + 1, y - halfSize + 1, halfSize, halfSize);
+
+        // 글로우 효과 (더 픽셀화된)
+        ctx.globalAlpha = 0.4;
+        ctx.fillStyle = this.color;
+        ctx.fillRect(x - halfSize - 2, y - halfSize - 2, this.size + 4, this.size + 4);
+        ctx.globalAlpha = 1.0;
+
+        // 회전 효과 (작은 투사체용)
+        if (this.size <= 8) {
+            const rotation = (Date.now() / 100) % 4;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            if (rotation < 1) {
+                ctx.fillRect(x - halfSize, y - halfSize, 2, 2);
+            } else if (rotation < 2) {
+                ctx.fillRect(x + halfSize - 2, y - halfSize, 2, 2);
+            } else if (rotation < 3) {
+                ctx.fillRect(x + halfSize - 2, y + halfSize - 2, 2, 2);
+            } else {
+                ctx.fillRect(x - halfSize, y + halfSize - 2, 2, 2);
+            }
+        }
     }
 
     hit() {
