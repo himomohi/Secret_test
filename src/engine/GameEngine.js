@@ -118,10 +118,8 @@ class GameEngine {
         this.inputManager.init();
         this.uiManager.init();
 
-        // 모바일 컨트롤 표시
-        if (this.isMobile) {
-            this.inputManager.showMobileControls();
-        }
+        // 게임 시작 시 모바일 컨트롤을 항상 숨깁니다.
+        this.inputManager.hideMobileControls();
 
         this.showMainMenu();
     }
