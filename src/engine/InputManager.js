@@ -55,21 +55,21 @@ class InputManager {
 
     showMobileControls() {
         if (this.joystickBase) {
-            this.joystickBase.classList.add('active');
+            this.joystickBase.style.display = 'block';
         }
         const mobileButtons = document.getElementById('mobileButtons');
         if (mobileButtons) {
-            mobileButtons.classList.add('active');
+            mobileButtons.style.display = 'flex';
         }
     }
 
     hideMobileControls() {
         if (this.joystickBase) {
-            this.joystickBase.classList.remove('active');
+            this.joystickBase.style.display = 'none';
         }
         const mobileButtons = document.getElementById('mobileButtons');
         if (mobileButtons) {
-            mobileButtons.classList.remove('active');
+            mobileButtons.style.display = 'none';
         }
     }
 
@@ -103,6 +103,11 @@ class InputManager {
     }
 
     onTouchStart(e) {
+        // 터치된 요소가 버튼이 아니면 기본 동작을 막습니다.
+        if (e.target.tagName !== 'BUTTON') {
+            e.preventDefault();
+        }
+
         for (let i = 0; i < e.changedTouches.length; i++) {
             const touch = e.changedTouches[i];
             const touchX = touch.clientX;
