@@ -103,8 +103,6 @@ class InputManager {
     }
 
     onTouchStart(e) {
-        e.preventDefault();
-
         for (let i = 0; i < e.changedTouches.length; i++) {
             const touch = e.changedTouches[i];
             const touchX = touch.clientX;

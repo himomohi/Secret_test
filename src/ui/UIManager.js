@@ -19,6 +19,10 @@ class UIManager {
         this.hideAll();
         this.mainMenu.show();
         this.currentScreen = 'main_menu';
+
+        if (this.game.isMobile) {
+            this.game.inputManager.showMobileControls();
+        }
     }
 
     showCharacterSelect() {
