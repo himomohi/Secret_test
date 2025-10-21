@@ -19,6 +19,8 @@ class UIManager {
         this.hideAll();
         this.mainMenu.show();
         this.currentScreen = 'main_menu';
+        // 메인 메뉴에서는 항상 컨트롤을 숨깁니다.
+        this.game.inputManager.hideMobileControls();
     }
 
     showCharacterSelect() {
@@ -32,7 +34,7 @@ class UIManager {
         this.gameHUD.show();
         this.currentScreen = 'game_hud';
 
-        // 모바일에서 조이스틱 표시
+        // 게임 HUD가 표시될 때만 컨트롤을 표시합니다.
         if (this.game.isMobile) {
             this.game.inputManager.showMobileControls();
         }
