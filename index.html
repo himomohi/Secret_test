@@ -67,8 +67,6 @@
         /* 가상 조이스틱 스타일 */
         #virtualJoystick {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
             width: 150px;
             height: 150px;
             background: rgba(68, 68, 68, 0.4);
@@ -76,6 +74,11 @@
             border: 3px solid rgba(68, 255, 68, 0.6);
             display: none;
             touch-action: none;
+        }
+
+        #virtualJoystick {
+            display: none;
+            transform: translate(-50%, -50%);
         }
 
         #virtualJoystick.active {
@@ -142,8 +145,6 @@
             #virtualJoystick {
                 width: 100px;
                 height: 100px;
-                bottom: 10px;
-                left: 10px;
             }
 
             #joystickKnob {

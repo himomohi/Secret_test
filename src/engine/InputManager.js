@@ -54,23 +54,19 @@ class InputManager {
     }
 
     showMobileControls() {
-        if (this.joystickBase) {
-            this.joystickBase.style.display = 'block';
-        }
+        const joystick = document.getElementById('virtualJoystick');
+        if (joystick) joystick.classList.add('active');
+
         const mobileButtons = document.getElementById('mobileButtons');
-        if (mobileButtons) {
-            mobileButtons.style.display = 'flex';
-        }
+        if (mobileButtons) mobileButtons.classList.add('active');
     }
 
     hideMobileControls() {
-        if (this.joystickBase) {
-            this.joystickBase.style.display = 'none';
-        }
+        const joystick = document.getElementById('virtualJoystick');
+        if (joystick) joystick.classList.remove('active');
+
         const mobileButtons = document.getElementById('mobileButtons');
-        if (mobileButtons) {
-            mobileButtons.style.display = 'none';
-        }
+        if (mobileButtons) mobileButtons.classList.remove('active');
     }
 
     onKeyDown(e) {
@@ -145,14 +141,18 @@ class InputManager {
     }
 
     startJoystick(touchId, x, y) {
+        if (this.joystickTouchId !== null) return;
+
         this.joystickTouchId = touchId;
         this.joystickActive = true;
 
-        // 조이스틱 위치 설정
         if (this.joystickBase) {
-            this.joystickCenter.x = x;
-            this.joystickCenter.y = y;
+            this.joystickBase.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+            this.joystickBase.classList.add('active');
         }
+
+        this.joystickCenter.x = x;
+        this.joystickCenter.y = y;
 
         this.updateJoystick(x, y);
     }
@@ -163,22 +163,24 @@ class InputManager {
         const dx = x - this.joystickCenter.x;
         const dy = y - this.joystickCenter.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxDistance = this.joystickRadius;
 
         if (distance > 0) {
-            // 정규화
             this.joystickVector.x = dx / distance;
             this.joystickVector.y = dy / distance;
 
-            // 최대 거리 제한
-            const maxDistance = this.joystickRadius;
             const clampedDistance = Math.min(distance, maxDistance);
+            const knobX = this.joystickVector.x * clampedDistance;
+            const knobY = this.joystickVector.y * clampedDistance;
 
-            // 노브 위치 업데이트
             if (this.joystickKnob) {
-                const knobX = (dx / distance) * clampedDistance;
-                const knobY = (dy / distance) * clampedDistance;
-
                 this.joystickKnob.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
+            }
+        } else {
+            this.joystickVector.x = 0;
+            this.joystickVector.y = 0;
+            if (this.joystickKnob) {
+                this.joystickKnob.style.transform = 'translate(-50%, -50%)';
             }
         }
     }
@@ -189,7 +191,9 @@ class InputManager {
         this.joystickVector.x = 0;
         this.joystickVector.y = 0;
 
-        // 노브 위치 리셋
+        if (this.joystickBase) {
+            this.joystickBase.classList.remove('active');
+        }
         if (this.joystickKnob) {
             this.joystickKnob.style.transform = 'translate(-50%, -50%)';
         }
